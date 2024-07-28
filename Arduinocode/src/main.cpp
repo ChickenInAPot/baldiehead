@@ -1,18 +1,35 @@
 #include <Arduino.h>
 
-// put function declarations here:
-int myFunction(int, int);
+int latchP = 10; //output parralel data
+int clockP = 9; //clockcycle
+int dataP = 8; //serial
+uint16_t LEDS = 0; //led light data
+int lastr; 
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+//set pins as output
+pinMode(latchP, OUTPUT);
+pinMode(clockP, OUTPUT);
+pinMode(dataP, OUTPUT);
+Serial.begin(9600);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+if(Serial.available() > 0){
+  int val = Serial.read();
 }
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+LEDS = 0;
+for(int i = 0; i < val; i++){
+  bitSet(LEDS, i);
 }
+
+digitalWrite(latchP, LOW);
+shiftOut(dataP, clockP, MSBFIRST, LEDS >> 8);
+shiftOut(dataP, clockP, MSBFIRST, LEDS);
+digitalWrite(latchP, HIGH);
+
+delay(50);
+
+}
+
